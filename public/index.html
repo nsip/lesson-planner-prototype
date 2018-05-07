@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script></head>
+  <body>
+
+    <form id="frm1" action="/action_page.php">
+      Learning Area: <select name="learningarea">
+        <option value="Mathematics">Mathematics</option>
+        <option value="Science">Science</option>
+        <option value="English">English</option>
+        <option value="History">History</option>
+      </select>
+      Year Level: <input type="checkbox" name="year" value="7">7
+      <input type="checkbox" name="year" value="8">8
+      <input type="checkbox" name="year" value="9">9
+      <input type="checkbox" name="year" value="10">10
+      <input type="checkbox" name="year" value="11">11
+      <input type="checkbox" name="year" value="12">12
+      <br/>
+      <textarea rows="4" cols="50" name="text">
+        At w3schools.com you will learn how to make a website. We offer free tutorials in all web development technologies.
+      </textarea>
+      <input type="submit" value="Submit">
+    </form> 
+
+    <p>Click "Get Alignments" to display the top aligned outcomes for the current text.</p>
+
+    <button onclick="myFunction()">Get Alignments</button>
+
+    <p id="demo"></p>
+
+    <script>
+      function myFunction() {
+        var x = document.getElementById("frm1");
+        var url = "";
+        url += "learningarea=" + x.elements["learningarea"].value;
+        var years = x.elements["year"];
+        var i;
+        for(i=0; i< years.length; i++) {
+          if(years[i].checked) {
+        url += "&year=" + years[i].value;
+          }
+        }
+        url += "&text=" + encodeURIComponent(x.elements["text"].value);
+        document.getElementById("demo").innerHTML = url;
+        $.get("http://localhost:1576?" + url, function(data, status) {
+          $("#demo").html(data);
+        })
+      }
+    </script>
+
+  </body>
+</html>
