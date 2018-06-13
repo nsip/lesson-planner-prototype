@@ -25,41 +25,96 @@
 
       <p>Click "Get Alignments" to display the top aligned outcomes for the current text.</p>
 
-      <button onclick="myFunction()">Get Alignments</button>
+      <button onclick="fetchCurriculum()">Get Alignments</button>
 
-      <p id="demo"></p>
-      <p id="demo1"></p>
+      <div id="demo">
+        <form id="curric">&nbsp;</form>
+        <div id="frm2" style="display:none;">Click "Get Resources" to display the top aligned resources for the selected curriculum statements.
+
+          <button onclick="fetchResources()">Get Resources</button>
+
+          <div id="frm3"/>
+          </div>
+        </div>
 
 
-      <script>
-        function myFunction() {
-          var x = document.getElementById("frm1");
-          var url = "";
-          url += "area=" + x.elements["learningarea"].value;
-          var years = x.elements["year"];
-          var i;
-          for(i=0; i< years.length; i++) {
-            if(years[i].checked) {
-              url += "&year=" + years[i].value;
-            }
-          }
-          url += "&text=" + encodeURIComponent(x.elements["text"].value);
-          document.getElementById("demo").innerHTML = url;
-          $.get("http://localhost:1576/align?" + url, function(data, status) {
-            if(status == "success") {
-              var text= "<ul>";
-              for (var i=0; i< 5; i++) {
-                text += "<li><input type='checkbox' name='outcome' value='" + data[i].Item + 
-                  "'>" + data[i].Item + ": " + data[i].Text;
+        <script>
+          function queryParams(areaInput, yearInput) {
+            var url = "";
+            url += "area=" + areaInput.value;
+            var years = yearInput;
+            var i;
+            for(i=0; i< years.length; i++) {
+              if(years[i].checked) {
+                url += "&year=" + years[i].value;
               }
-              text += "</ul>";
-              document.getElementById("demo1").innerHTML = text;
-            } else {
-              document.getElementById("demo1").innerHTML = "Error!";
             }
-          });
+            return url;
+          }
+
+function fetchCurriculum() {
+  var x = document.getElementById("frm1");
+  var url = queryParams(x.elements["learningarea"], x.elements["year"]);
+  url += "&text=" + encodeURIComponent(x.elements["text"].value);
+  var request = $.get("http://localhost:1576/curricalign?" + url);
+  request.done(function(data, textStatus, jqXHR) {
+    if(textStatus == "success") {
+      var text= "No matching curriculum statements found";
+      document.getElementById("frm2").style.display = "none";
+      if (data.length > 0) {
+        text= "<ul>";
+        for (var i=0; i< 5 && i<data.length; i++) {
+          text += "<li><input type='checkbox' name='outcome' value='" + data[i].Item + 
+            "'>" + data[i].Item + ": " + data[i].Text;
         }
-      </script>
+        text += "</ul>";
+        document.getElementById("frm2").style.display = "block";
+      }
+      document.getElementById("curric").innerHTML = text;
+    } else {
+      document.getElementById("curric").innerHTML = "Error! " + textStatus;
+      document.getElementById("frm2").style.display = "none";
+    }
+  });
+  request.fail(function(jqXHR, textStatus, errorThrown) {
+      document.getElementById("curric").innerHTML = "Error! " + errorThrown;
+      document.getElementById("frm2").style.display = "none";
+  });
+}
+
+
+function fetchResources() {
+  var frm1 = document.getElementById("frm1");
+  var frm2 = document.getElementById("curric");
+  var url = queryParams(frm1.elements["learningarea"], frm1.elements["year"]);
+  var outcomes = frm2.elements["outcome"];
+  var i;
+  for(i=0; i< outcomes.length; i++) {
+    if(outcomes[i].checked) {
+      url += "&item=" + outcomes[i].value;
+    }
+  }
+  var request = $.get("http://localhost:1576/align?" + url);
+  request.done(function(data, textStatus, jqXHR) {
+    if(textStatus == "success") {
+      var text= "No matching resources found";
+      if (data.length > 0) {
+        text= "<ul>";
+        for (var i=0; i< 5 && i<data.length; i++) {
+          text += "<li><input type='checkbox' name='resource' value='" + data[i].Url + 
+            "'><a href='" + data[i].Url + "'>" + data[i].Url + "</a>: " + data[i].Content;
+        }
+        text += "</ul>";
+      } 
+      document.getElementById("frm3").innerHTML = text;
+    } else {
+      document.getElementById("frm3").innerHTML = "Error! " + textStatus;
+    }
+  });
+request.fail(function(jqXHR, textStatus, errorThrown) {      document.getElementById("frm3").innerHTML = "Error! " + errorThrown;
+  });  
+}
+        </script>
 
     </body>
 </html>

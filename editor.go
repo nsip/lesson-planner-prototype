@@ -5,15 +5,18 @@ import (
 	//"net/http"
 
 	"github.com/labstack/echo"
-	"github.com/nsip/curriculum-align"
+	cu "github.com/nsip/curriculum-align"
+	re "github.com/nsip/resource-align"
 )
 
 func main() {
-	align.Init()
+	cu.Init()
+	re.Init()
 	e := echo.New()
-	e.GET("/align", align.Align)
+	e.GET("/align", re.Align)
+	e.GET("/curricalign", cu.Align)
 	e.Static("/", "public")
 	e.File("/", "public/index.html")
-	log.Println("Editor: localhost:1756")
+	log.Println("\n\n\nEditor: http://localhost:1576")
 	e.Logger.Fatal(e.Start(":1576"))
 }
