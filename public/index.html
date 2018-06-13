@@ -3,7 +3,7 @@
   <head><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script></head>
     <body>
 
-      <form id="frm1" action="/action_page.php">
+      <form id="frm1">
         Learning Area: <select name="learningarea">
           <option value="Mathematics">Mathematics</option>
           <option value="Science">Science</option>
@@ -20,12 +20,13 @@
         <textarea rows="4" cols="50" name="text">
           At w3schools.com you will learn how to make a website. We offer free tutorials in all web development technologies.
         </textarea>
-        <input type="submit" value="Submit">
       </form> 
+      
+      <p><button onclick="savePlan()">Save Lesson Plan</button> (includes selected curriculum statements and resources)</p>
 
       <p>Click "Get Curriculum" to display the top aligned curriculum statements for the current text.</p>
 
-      <button onclick="fetchCurriculum()">Get Alignments</button>
+      <button onclick="fetchCurriculum()">Get Curriculum</button>
 
       <div id="demo">
         <form id="curric">&nbsp;</form>
@@ -33,8 +34,7 @@
 
           <button onclick="fetchResources()">Get Resources</button>
 
-          <div id="frm3"/>
-          </div>
+          <form id="frm3"/>&nbsp;</form>
         </div>
 
 
@@ -63,7 +63,7 @@ function fetchCurriculum() {
       document.getElementById("frm2").style.display = "none";
       if (data.length > 0) {
         text= "<ul>";
-        for (var i=0; i< 5 && i<data.length; i++) {
+        for (var i=0; i< 10 && i<data.length; i++) {
           text += "<li><input type='checkbox' name='outcome' value='" + data[i].Item + 
             "'>" + data[i].Item + ": " + data[i].Text;
         }
@@ -100,7 +100,7 @@ function fetchResources() {
       var text= "No matching resources found";
       if (data.length > 0) {
         text= "<ul>";
-        for (var i=0; i< 5 && i<data.length; i++) {
+        for (var i=0; i< 10 && i<data.length; i++) {
           text += "<li><input type='checkbox' name='resource' value='" + data[i].Url + 
             "'><a href='" + data[i].Url + "'>" + data[i].Url + "</a>: " + data[i].Content;
         }
@@ -113,6 +113,53 @@ function fetchResources() {
   });
 request.fail(function(jqXHR, textStatus, errorThrown) {      document.getElementById("frm3").innerHTML = "Error! " + errorThrown;
   });  
+}
+
+function savePlan() {
+  var frm1 = document.getElementById("frm1");
+  var frm2 = document.getElementById("curric");
+  var frm3 = document.getElementById("frm3");
+  var preface = "";
+            var i;
+  preface += "Area: " + frm1.elements["learningarea"].value + "\n";
+  var years = frm1.elements["year"];
+            for(i=0; i< years.length; i++) {
+              if(years[i].checked) {
+                preface += "Year: " + years[i].value + "\n";
+            }
+            }
+  var outcomes = frm2.elements["outcome"];
+  if(!(outcomes === undefined)) {
+  for(i=0; i< outcomes.length; i++) {
+    if(outcomes[i].checked) {
+      preface += "Outcome: " + outcomes[i].value + "\n";
+    }
+  }
+  }
+  var resources = frm3.elements["resource"];
+  if(!(resources === undefined)) {
+  for(i=0; i< resources.length; i++) {
+    if(resources[i].checked) {
+      preface += "Resource: " + resources[i].value + "\n";
+    }
+  }
+  }
+  var text = frm1.elements["text"].value;
+  download("lessonplan.txt", preface + "\n\n\n" + text);
+}
+
+/* https://stackoverflow.com/questions/3665115/create-a-file-in-memory-for-user-to-download-not-through-server */
+function download(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
 }
         </script>
 
