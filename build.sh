@@ -29,7 +29,7 @@ build_mac64() {
 	GOARCH=amd64
 	LDFLAGS="-s -w"
 	OUTPUT=$CWD/build/Mac/lesson-planner-prototype
-	HARNESS=resource-align
+	HARNESS=lesson-planner-prototype
 	ZIP=lesson-planner-prototype-Mac.zip
 	do_build
 	#do_upx
