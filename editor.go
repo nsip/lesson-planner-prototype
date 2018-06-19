@@ -11,7 +11,7 @@ import (
 
 func main() {
 	cu.Init()
-	re.Init()
+	re.Init("1576")
 	e := echo.New()
 	e.GET("/align", re.Align)
 	e.GET("/curricalign", cu.Align)
