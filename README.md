@@ -1,5 +1,9 @@
 # Lesson Planner Prototype
 
+*** DEPRECATED (RETIRED) ***
+
+*This repository is obsolete and retired (archived). This is an unmantained repository. In particular, note that it is not being updated with security patches, including those for any dependent libraries.*
+
 NOTE: This is experimental and proof-of-concept code
 
 This demonstration code brings together the functionality of https://github.com/nsip/curriculum-align and https://github.com/nsip/resource-align, to demonstrate how a lesson plan authoring system can incorporate suggestions of related curriculum statements and resources.
